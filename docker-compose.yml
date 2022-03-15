@@ -1,0 +1,67 @@
+# Arquivo de orquestramento dos containeres necessários para a aplicação funcionar
+
+version: "3.7"
+
+# Serviços que serão executados ao iniciar o container
+services:
+  
+  # Nome do serviço
+  database:
+    
+    # Imagem do container
+    image: postgres
+
+    # Nome do container
+    container_name: rentx_db
+
+    # Reinicia o container sempre que ele for parado
+    restart: always
+
+    # Mapeamento da porta local para a porta do container
+    ports:
+      - 5432:5432
+
+    # Variáveis de ambiente (padrão do container postgres)
+    environment:
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=ignite
+      - POSTGRES_DB=rentx
+
+    # Volume de armazenamento (local:container)
+    volumes:
+      - pgdata:/data/postgres
+
+  api:
+    
+    # Executa a build da imagem local (Dockerfile)
+    build: .
+    container_name: rentx
+    ports:
+      - 3333:3333
+
+    # Mapeamento do diretório local (.) para o workdir (/usr/app)
+    volumes:
+      - .:/usr/app
+    links:
+      - database
+    depends_on:
+      - database
+
+# Volumes da aplicação
+volumes:
+  
+  # Criação de um volume local onde o container do postgres apontará
+  pgdata:
+    driver: local
+
+# Comandos:
+# docker-compose up (criação das imagens e containeres)
+# docker-compose up -d (rodar em background)
+# docker-compose stop (para o docker-compose)
+# docker-compose start (retorna o docker-compose)
+# docker exec -it <nome do container> /bin/bash (entra no terminal do container)
+# docker logs <nome do container> -f (observar os logs do sistema)
+
+# Caso não esteja fazendo o reload automáticamente, passe para o script dev a
+# flag --poll. Ex: ts-node-dev --poll --inspect --transpile-only --ignore-watch 
+# node_modules --respawn src/server.ts
