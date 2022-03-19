@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "ts-node-dev -r tsconfig-paths/register --poll --inspect --transpile-only --ignore-watch node_modules --respawn src/interface/http/express/server.ts",
     "typeorm": "ts-node-dev -r tsconfig-paths/register ./node_modules/typeorm/cli",
-    "test": "jest"
+    "test": "jest",
+    "seed": "ts-node-dev src/infra/database/typeorm/seeds/index.ts"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

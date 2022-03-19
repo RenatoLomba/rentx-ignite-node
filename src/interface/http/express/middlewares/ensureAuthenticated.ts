@@ -58,7 +58,7 @@ async function ensureAuthenticated(
 
   const user = await verifyUserById(user_id);
 
-  request.user = { email: user.email, id: user.id };
+  request.user = { email: user.email, id: user.id, isAdmin: user.isAdmin };
 
   next();
 }
