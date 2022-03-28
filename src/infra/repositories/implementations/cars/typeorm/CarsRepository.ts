@@ -6,9 +6,26 @@ import { Car } from '@infra/entities/cars/typeorm/Car';
 import { ICarsRepository } from '@infra/repositories/interface/cars/ICarsRepository';
 import { Repository } from '@infra/repositories/TypeormRepository';
 
+import { ISpecification } from '../../../../../domain/entities/cars/ISpecification';
+
 export class CarsRepository extends Repository<Car> implements ICarsRepository {
   constructor() {
     super(Car);
+  }
+
+  async addSpecifications(
+    carId: string,
+    specifications: ISpecification[],
+  ): Promise<ICar> {
+    const car = await this.repository.findOne(carId);
+
+    car.specifications = specifications;
+
+    const updatedCar = this.repository.create(car);
+
+    await this.repository.save(updatedCar);
+
+    return updatedCar;
   }
 
   async findAvailable(filters: IListCarsFilters): Promise<ICar[]> {

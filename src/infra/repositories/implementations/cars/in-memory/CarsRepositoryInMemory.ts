@@ -4,8 +4,14 @@ import { ICar } from '@domain/entities/cars/ICar';
 import { Car } from '@infra/entities/cars/model/Car';
 import { ICarsRepository } from '@infra/repositories/interface/cars/ICarsRepository';
 
+import { ISpecification } from '../../../../../domain/entities/cars/ISpecification';
+
 export class CarsRepositoryInMemory implements ICarsRepository {
-  private readonly cars: Car[] = [];
+  private cars: ICar[] = [];
+
+  async findById(carId: string): Promise<ICar> {
+    return this.cars.find((car) => car.id === carId);
+  }
 
   async create(dto: ICreateCarDTO): Promise<ICar> {
     const car = new Car();
@@ -39,5 +45,22 @@ export class CarsRepositoryInMemory implements ICarsRepository {
     }
 
     return carsList;
+  }
+
+  async addSpecifications(
+    carId: string,
+    specifications: ISpecification[],
+  ): Promise<ICar> {
+    this.cars = this.cars.map((car) => {
+      const newCar = { ...car };
+
+      if (carId === car.id) {
+        newCar.specifications = specifications;
+      }
+
+      return newCar;
+    });
+
+    return this.cars.find((car) => car.id === carId);
   }
 }

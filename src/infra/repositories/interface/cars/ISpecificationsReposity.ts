@@ -6,4 +6,5 @@ export interface ISpecificationsRepository {
     createSpecificationDTO: ICreateSpecificationDTO,
   ): Promise<ISpecification>;
   findByName(name: string): Promise<ISpecification>;
+  findByIds(idList: string[]): Promise<ISpecification[]>;
 }
