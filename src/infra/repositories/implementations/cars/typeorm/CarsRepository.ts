@@ -13,6 +13,10 @@ export class CarsRepository extends Repository<Car> implements ICarsRepository {
     super(Car);
   }
 
+  async findByIdWithImages(id: string): Promise<Car> {
+    return this.repository.findOne(id, { relations: ['images'] });
+  }
+
   async addSpecifications(
     carId: string,
     specifications: ISpecification[],

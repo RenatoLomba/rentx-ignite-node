@@ -6,6 +6,7 @@ import { ISpecification } from '../../../../domain/entities/cars/ISpecification'
 
 export interface ICarsRepository {
   findById(carId: string): Promise<ICar>;
+  findByIdWithImages(carId: string): Promise<ICar>;
   create(dto: ICreateCarDTO): Promise<ICar>;
   findByLicensePlate(license_plate: string): Promise<ICar>;
   findAvailable(filters: IListCarsFilters): Promise<ICar[]>;

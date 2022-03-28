@@ -6,12 +6,14 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryColumn,
 } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { ICar } from '@domain/entities/cars/ICar';
 
+import { CarImage } from './CarImage';
 import { Category } from './Category';
 import { Specification } from './Specification';
 
@@ -55,6 +57,9 @@ export class Car implements ICar {
     inverseJoinColumns: [{ name: 'specification_id' }],
   })
   specifications?: Specification[];
+
+  @OneToMany(() => CarImage, (carImage) => carImage.car)
+  images?: CarImage[];
 
   @CreateDateColumn()
   created_at: Date;

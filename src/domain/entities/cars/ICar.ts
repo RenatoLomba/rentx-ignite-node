@@ -1,3 +1,4 @@
+import { ICarImage } from './ICarImage';
 import { ISpecification } from './ISpecification';
 
 export interface ICar {
@@ -11,5 +12,6 @@ export interface ICar {
   brand: string;
   category_id: string;
   specifications?: ISpecification[];
+  images?: ICarImage[];
   created_at: Date;
 }
