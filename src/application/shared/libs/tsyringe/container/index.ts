@@ -11,6 +11,9 @@ import { ICarsRepository } from '@infra/repositories/interface/cars/ICarsReposit
 import { ICategoriesRepository } from '@infra/repositories/interface/cars/ICategoriesRepository';
 import { ISpecificationsRepository } from '@infra/repositories/interface/cars/ISpecificationsReposity';
 
+import { RentalsRepository } from '../../../../../infra/repositories/implementations/rentals/RentalsRepository';
+import { IRentalsRepository } from '../../../../../infra/repositories/interface/rentals/IRentalsRepository';
+
 container.registerSingleton<ICategoriesRepository>(
   'CategoriesRepository',
   CategoriesRepository,
@@ -31,4 +34,9 @@ container.registerSingleton<ICarsRepository>('CarsRepository', CarsRepository);
 container.registerSingleton<ICarImagesRepository>(
   'CarImagesRepository',
   CarImagesRepository,
+);
+
+container.registerSingleton<IRentalsRepository>(
+  'RentalsRepository',
+  RentalsRepository,
 );

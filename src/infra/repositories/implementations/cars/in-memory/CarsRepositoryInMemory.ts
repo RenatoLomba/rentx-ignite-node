@@ -13,6 +13,10 @@ export class CarsRepositoryInMemory implements ICarsRepository {
     return this.cars.find((car) => car.id === carId);
   }
 
+  async findByIdWithImages(carId: string): Promise<ICar> {
+    return this.findById(carId);
+  }
+
   async create(dto: ICreateCarDTO): Promise<ICar> {
     const car = new Car();
 

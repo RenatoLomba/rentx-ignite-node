@@ -15,7 +15,7 @@ services:
     container_name: rentx_db
 
     # Reinicia o container sempre que ele for parado
-    restart: always
+    # restart: always
 
     # Mapeamento da porta local para a porta do container
     ports:

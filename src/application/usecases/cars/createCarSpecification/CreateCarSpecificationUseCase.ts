@@ -29,8 +29,6 @@ export class CreateCarSpecificationUseCase implements IUseCase {
       dto.specifications_ids,
     );
 
-    console.log(specifications);
-
     const carWithSpecifications = await this.carsRepository.addSpecifications(
       car.id,
       specifications,
