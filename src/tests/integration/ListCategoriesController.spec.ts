@@ -8,7 +8,7 @@ import { app } from '@interface/http/express/app';
 
 let connection: Connection;
 
-describe('Create Category Controller', () => {
+describe('List Categories Controller', () => {
   beforeAll(async () => {
     connection = await createConnection();
     await connection.runMigrations();
@@ -21,51 +21,37 @@ describe('Create Category Controller', () => {
     await connection.close();
   });
 
-  it('Should be able to create a new category', async () => {
+  it('Should be able to list all categories', async () => {
     // Given
     const responseToken = await request(app).post('/auth/sessions').send({
       email: 'admin@rentx.com',
       password: 'admin',
     });
     const { token } = responseToken.body;
-    const newCategoryDto: ICreateCategoryDTO = {
+    const createCategoryDto: ICreateCategoryDTO = {
       name: 'test-category',
       description: 'test-description',
     };
-
-    // When
-    const response = await request(app)
+    await request(app)
       .post('/categories')
-      .send(newCategoryDto)
+      .send(createCategoryDto)
       .set({
         Authorization: `Bearer ${token}`,
       });
 
-    // Then
-    expect(response.status).toBe(201);
-  });
-
-  it('Should not be able to create a new category if already exists', async () => {
-    // Given
-    const responseToken = await request(app).post('/auth/sessions').send({
-      email: 'admin@rentx.com',
-      password: 'admin',
-    });
-    const { token } = responseToken.body;
-    const categoryAlreadyExistsDto: ICreateCategoryDTO = {
-      name: 'test-category',
-      description: 'test-description',
-    };
-
     // When
     const response = await request(app)
-      .post('/categories')
-      .send(categoryAlreadyExistsDto)
+      .get('/categories')
+      .send()
       .set({
         Authorization: `Bearer ${token}`,
       });
 
+    const { categories } = response.body;
+
     // Then
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(200);
+    expect(categories.length).toBe(1);
+    expect(categories[0]).toHaveProperty('id');
   });
 });

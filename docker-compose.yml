@@ -1,13 +1,11 @@
 # Arquivo de orquestramento dos containeres necessários para a aplicação funcionar
 
-version: "3.7"
+version: '3.7'
 
 # Serviços que serão executados ao iniciar o container
 services:
-  
   # Nome do serviço
   database:
-    
     # Imagem do container
     image: postgres
 
@@ -32,7 +30,6 @@ services:
       - pgdata:/data/postgres
 
   api:
-    
     # Executa a build da imagem local (Dockerfile)
     build: .
     container_name: rentx
@@ -44,16 +41,16 @@ services:
       - .:/usr/app
     links:
       - database
+
+    # Esse container depende do container database para existir
     depends_on:
       - database
 
 # Volumes da aplicação
 volumes:
-  
   # Criação de um volume local onde o container do postgres apontará
   pgdata:
     driver: local
-
 # Comandos:
 # docker-compose up (criação das imagens e containeres)
 # docker-compose up -d (rodar em background)
@@ -63,5 +60,5 @@ volumes:
 # docker logs <nome do container> -f (observar os logs do sistema)
 
 # Caso não esteja fazendo o reload automáticamente, passe para o script dev a
-# flag --poll. Ex: ts-node-dev --poll --inspect --transpile-only --ignore-watch 
+# flag --poll. Ex: ts-node-dev --poll --inspect --transpile-only --ignore-watch
 # node_modules --respawn src/server.ts
