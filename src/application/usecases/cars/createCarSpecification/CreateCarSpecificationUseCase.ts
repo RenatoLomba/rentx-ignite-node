@@ -1,10 +1,11 @@
 import { inject, injectable } from 'tsyringe';
 
-import { ICreateCarSpecificationDTO } from '../../../../domain/dtos/cars/ICreateCarSpecificationDTO';
-import { ICar } from '../../../../domain/entities/cars/ICar';
-import { CreateCarSpecificationEnum } from '../../../../domain/enums/cars/CreateCarSpecificationEnum';
-import { ICarsRepository } from '../../../../infra/repositories/interface/cars/ICarsRepository';
-import { ISpecificationsRepository } from '../../../../infra/repositories/interface/cars/ISpecificationsReposity';
+import { ICreateCarSpecificationDTO } from '@domain/dtos/cars/ICreateCarSpecificationDTO';
+import { ICar } from '@domain/entities/cars/ICar';
+import { CreateCarSpecificationEnum } from '@domain/enums/cars/CreateCarSpecificationEnum';
+import { ICarsRepository } from '@infra/repositories/interface/cars/ICarsRepository';
+import { ISpecificationsRepository } from '@infra/repositories/interface/cars/ISpecificationsReposity';
+
 import { AppError } from '../../../shared/errors/AppError';
 import { IUseCase } from '../../IUseCase';
 

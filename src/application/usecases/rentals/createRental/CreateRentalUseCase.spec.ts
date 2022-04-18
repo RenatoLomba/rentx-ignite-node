@@ -4,6 +4,7 @@ import 'reflect-metadata';
 
 import { CreateRentalDTO } from '@domain/dtos/rentals/CreateRentalDTO';
 import { Rental } from '@domain/entities/rentals/Rental';
+import { CreateRentalEnum } from '@domain/enums/rentals/CreateRentalEnum';
 import { CarsRepositoryInMemory } from '@infra/repositories/implementations/cars/in-memory/CarsRepositoryInMemory';
 import { RentalsRepositoryInMemory } from '@infra/repositories/implementations/rentals/in-memory/RentalsRepositoryInMemory';
 import { IRentalsRepository } from '@infra/repositories/interface/rentals/IRentalsRepository';
@@ -51,6 +52,9 @@ describe('Create a Rental', () => {
     await rentalsRepository.create(
       plainToClass(Rental, { ...dto, user_id: faker.datatype.uuid() }),
     );
+    const expectedResult = new AppError(
+      CreateRentalEnum.CAR_IS_UNAVAILABLE_ERROR,
+    );
 
     // When
     const execution = async () => {
@@ -58,7 +62,7 @@ describe('Create a Rental', () => {
     };
 
     // Then
-    expect(execution).rejects.toBeInstanceOf(AppError);
+    expect(execution).rejects.toEqual(expectedResult);
   });
 
   it('Should not be able to create rental if user has an open rent', async () => {
@@ -74,6 +78,9 @@ describe('Create a Rental', () => {
     await rentalsRepository.create(
       plainToClass(Rental, { ...dto, car_id: faker.datatype.uuid() }),
     );
+    const expectedResult = new AppError(
+      CreateRentalEnum.USER_ALREADY_HAS_AN_UNFINISHED_RENT_ERROR,
+    );
 
     // When
     const execution = async () => {
@@ -81,7 +88,7 @@ describe('Create a Rental', () => {
     };
 
     // Then
-    expect(execution).rejects.toBeInstanceOf(AppError);
+    expect(execution).rejects.toEqual(expectedResult);
   });
 
   it('Should not be able to create rental if does not have a minimum of 24 hours to return', async () => {
@@ -94,6 +101,9 @@ describe('Create a Rental', () => {
       start_date: new Date('2022-03-30 11:00:00'),
       expected_return_date: new Date('2022-03-31 10:00:00'),
     });
+    const expectedResult = new AppError(
+      CreateRentalEnum.MINIMUM_HOURS_TO_RETURN_ERROR,
+    );
 
     // When
     const execution = async () => {
@@ -101,6 +111,6 @@ describe('Create a Rental', () => {
     };
 
     // Then
-    expect(execution).rejects.toBeInstanceOf(AppError);
+    expect(execution).rejects.toEqual(expectedResult);
   });
 });

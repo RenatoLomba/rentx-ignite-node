@@ -1,13 +1,15 @@
 import 'reflect-metadata';
-import { ICreateCarDTO } from '../../../../domain/dtos/cars/ICreateCarDTO';
-import { ICreateCarSpecificationDTO } from '../../../../domain/dtos/cars/ICreateCarSpecificationDTO';
-import { ICreateSpecificationDTO } from '../../../../domain/dtos/cars/ICreateSpecificationDTO';
-import { ICar } from '../../../../domain/entities/cars/ICar';
-import { ISpecification } from '../../../../domain/entities/cars/ISpecification';
-import { CarsRepositoryInMemory } from '../../../../infra/repositories/implementations/cars/in-memory/CarsRepositoryInMemory';
-import { SpecificationsRepositoryInMemory } from '../../../../infra/repositories/implementations/cars/in-memory/SpecificationsRepositoryInMemory';
-import { ICarsRepository } from '../../../../infra/repositories/interface/cars/ICarsRepository';
-import { ISpecificationsRepository } from '../../../../infra/repositories/interface/cars/ISpecificationsReposity';
+import { ICreateCarDTO } from '@domain/dtos/cars/ICreateCarDTO';
+import { ICreateCarSpecificationDTO } from '@domain/dtos/cars/ICreateCarSpecificationDTO';
+import { ICreateSpecificationDTO } from '@domain/dtos/cars/ICreateSpecificationDTO';
+import { ICar } from '@domain/entities/cars/ICar';
+import { ISpecification } from '@domain/entities/cars/ISpecification';
+import { CreateCarSpecificationEnum } from '@domain/enums/cars/CreateCarSpecificationEnum';
+import { CarsRepositoryInMemory } from '@infra/repositories/implementations/cars/in-memory/CarsRepositoryInMemory';
+import { SpecificationsRepositoryInMemory } from '@infra/repositories/implementations/cars/in-memory/SpecificationsRepositoryInMemory';
+import { ICarsRepository } from '@infra/repositories/interface/cars/ICarsRepository';
+import { ISpecificationsRepository } from '@infra/repositories/interface/cars/ISpecificationsReposity';
+
 import { AppError } from '../../../shared/errors/AppError';
 import { CreateCarUseCase } from '../createCar/CreateCarUseCase';
 import { CreateSpecificationUseCase } from '../createSpecification/CreateSpecificationUseCase';
@@ -114,6 +116,9 @@ describe('Create a Car Specification', () => {
       car_id: '123',
       specifications_ids: ['456'],
     };
+    const expectedResult = new AppError(
+      CreateCarSpecificationEnum.CAR_NOT_FOUND_ERROR,
+    );
 
     // When
     const execution = async () => {
@@ -121,6 +126,6 @@ describe('Create a Car Specification', () => {
     };
 
     // Then
-    expect(execution).rejects.toBeInstanceOf(AppError);
+    expect(execution).rejects.toEqual(expectedResult);
   });
 });

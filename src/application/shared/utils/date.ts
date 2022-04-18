@@ -18,3 +18,7 @@ export const dateUTCNow = () => {
 export const daysBetweenDates = (startDate: Date, endDate: Date) => {
   return dayjs(startDate).diff(endDate, 'days');
 };
+
+export const addDaysToDate = (days: number, date = new Date()) => {
+  return dayjs(date).add(days, 'days').toDate();
+};

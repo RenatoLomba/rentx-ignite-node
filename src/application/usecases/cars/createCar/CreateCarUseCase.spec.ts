@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { AppError } from '@application/shared/errors/AppError';
 import { ICreateCarDTO } from '@domain/dtos/cars/ICreateCarDTO';
+import { CreateCarEnum } from '@domain/enums/cars/CreateCarEnum';
 import { CarsRepositoryInMemory } from '@infra/repositories/implementations/cars/in-memory/CarsRepositoryInMemory';
 
 import { CreateCarUseCase } from './CreateCarUseCase';
@@ -27,7 +28,6 @@ describe('Create Car', () => {
   it('should be able to create a new car', async () => {
     // Given
     const createCarDto: ICreateCarDTO = createDto();
-
     const createCarUseCase: CreateCarUseCase = createInstance();
 
     // When
@@ -40,10 +40,9 @@ describe('Create Car', () => {
   it('should not be able to create a car with existent license plate', async () => {
     // Given
     const createCarDto: ICreateCarDTO = createDto();
-
     const createCarUseCase: CreateCarUseCase = createInstance();
-
     await createCarUseCase.execute(createCarDto);
+    const expectedResult = new AppError(CreateCarEnum.CAR_ALREADY_EXISTS_ERROR);
 
     // When
     const createCarExecution = async () => {
@@ -51,13 +50,12 @@ describe('Create Car', () => {
     };
 
     // Then
-    expect(createCarExecution).rejects.toBeInstanceOf(AppError);
+    expect(createCarExecution).rejects.toEqual(expectedResult);
   });
 
   it('should be able to create a car with available true by default', async () => {
     // Given
     const createCarDto: ICreateCarDTO = createDto();
-
     const createCarUseCase: CreateCarUseCase = createInstance();
 
     // When

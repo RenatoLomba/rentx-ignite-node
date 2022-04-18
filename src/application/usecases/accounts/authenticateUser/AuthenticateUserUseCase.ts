@@ -1,5 +1,5 @@
 import { compare } from 'bcryptjs';
-import { sign } from 'jsonwebtoken';
+import { plainToClass } from 'class-transformer';
 import { inject, injectable } from 'tsyringe';
 
 import { AppError } from '@application/shared/errors/AppError';
@@ -7,15 +7,22 @@ import { IUseCase } from '@application/usecases/IUseCase';
 import { IAuthenticateUserDTO } from '@domain/dtos/accounts/IAuthenticateUserCTO';
 import { IAuthResponseDTO } from '@domain/dtos/accounts/IAuthResponseDTO';
 import { IUser } from '@domain/entities/accounts/IUser';
+import { UserTokens } from '@domain/entities/accounts/UserTokens';
 import { AuthenticateUserEnum } from '@domain/enums/accounts/AuthenticateUserEnum';
 import { JWTEnum } from '@domain/enums/accounts/JWTEnum';
 import { IUsersRepository } from '@infra/repositories/interface/accounts/IUsersRepository';
+import { IUserTokensRepository } from '@infra/repositories/interface/accounts/IUserTokensRepository';
+
+import { addDaysToDate } from '../../../shared/utils/date';
+import { generateJWT } from '../../../shared/utils/jwt';
 
 @injectable()
 class AuthenticateUserUseCase implements IUseCase {
   constructor(
     @inject('UsersRepository')
     private readonly usersRepository: IUsersRepository,
+    @inject('UserTokensRepository')
+    private readonly userTokensRepository: IUserTokensRepository,
   ) {}
 
   async execute({
@@ -26,7 +33,9 @@ class AuthenticateUserUseCase implements IUseCase {
 
     await this.verifyPasswordIsCorrect(password, user.password);
 
-    const token = this.generateJWT(user);
+    const token = generateJWT({ subject: user.id });
+
+    const refresh_token = await this.createRefreshToken(user);
 
     return {
       user: {
@@ -34,16 +43,29 @@ class AuthenticateUserUseCase implements IUseCase {
         name: user.name,
       },
       token,
+      refresh_token,
     };
   }
 
-  private generateJWT(user: IUser) {
-    const token = sign({}, JWTEnum.Secret, {
+  private async createRefreshToken(user: IUser) {
+    const refresh_token = generateJWT({
       subject: user.id,
-      expiresIn: JWTEnum.ExpiresIn,
+      secret: JWTEnum.RefreshSecret as string,
+      expiresIn: JWTEnum.RefreshExpiresIn as string,
+      payload: { email: user.email },
     });
 
-    return token;
+    const expires_date = addDaysToDate(JWTEnum.RefreshExpiresInDays);
+
+    await this.userTokensRepository.create(
+      plainToClass(UserTokens, {
+        expires_date,
+        refresh_token,
+        user_id: user.id,
+      }),
+    );
+
+    return refresh_token;
   }
 
   private async verifyUserExists(email: string) {

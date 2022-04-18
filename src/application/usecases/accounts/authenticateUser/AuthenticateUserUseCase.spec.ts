@@ -2,15 +2,11 @@ import 'reflect-metadata';
 import { AppError } from '@application/shared/errors/AppError';
 import { IAuthenticateUserDTO } from '@domain/dtos/accounts/IAuthenticateUserCTO';
 import { ICreateUserDTO } from '@domain/dtos/accounts/ICreateUserDTO';
+import { AuthenticateUserEnum } from '@domain/enums/accounts/AuthenticateUserEnum';
 import { UsersRepositoryInMemory } from '@infra/repositories/implementations/accounts/in-memory/UsersRepositoryInMemory';
-import { IUsersRepository } from '@infra/repositories/interface/accounts/IUsersRepository';
 
 import { CreateUserUseCase } from '../createUser/CreateUserUseCase';
 import { AuthenticateUserUseCase } from './AuthenticateUserUseCase';
-
-let usersRepository: IUsersRepository;
-let authenticateUserUseCase: AuthenticateUserUseCase;
-let createUserUseCase: CreateUserUseCase;
 
 const createUserDTO: ICreateUserDTO = {
   email: 'test@email.com',
@@ -24,41 +20,68 @@ const authenticateUserDTO: IAuthenticateUserDTO = {
   password: 'test-password',
 };
 
-describe('Authenticate User', () => {
-  beforeEach(() => {
-    usersRepository = new UsersRepositoryInMemory();
-    authenticateUserUseCase = new AuthenticateUserUseCase(usersRepository);
-    createUserUseCase = new CreateUserUseCase(usersRepository);
-  });
+const createInstanceOfUseCase = (): {
+  authenticateUserUseCase: AuthenticateUserUseCase;
+  createUserUseCase: CreateUserUseCase;
+} => {
+  const usersRepository = new UsersRepositoryInMemory();
+  const authenticateUserUseCase = new AuthenticateUserUseCase(usersRepository);
+  const createUserUseCase = new CreateUserUseCase(usersRepository);
 
+  return { authenticateUserUseCase, createUserUseCase };
+};
+
+describe('Authenticate User', () => {
   it('should be able to authenticate user', async () => {
+    // Given
+    const { authenticateUserUseCase, createUserUseCase } =
+      createInstanceOfUseCase();
     await createUserUseCase.execute(createUserDTO);
 
+    // When
     const authResponse = await authenticateUserUseCase.execute(
       authenticateUserDTO,
     );
 
+    // Then
     expect(authResponse).toHaveProperty('token');
     expect(authResponse).toHaveProperty('user');
   });
 
   it('should not be able to authenticate user when email not exists', async () => {
+    // Given
+    const { authenticateUserUseCase } = createInstanceOfUseCase();
+    const expectedResult = new AppError(
+      AuthenticateUserEnum.EMAIL_OR_PASSWORD_INCORRECT_ERROR,
+    );
+
+    // When
     const execution = async () => {
       await authenticateUserUseCase.execute(authenticateUserDTO);
     };
 
-    expect(execution).rejects.toBeInstanceOf(AppError);
+    // Then
+    expect(execution).rejects.toEqual(expectedResult);
   });
 
   it('should not be able to authenticate user when password is incorrect', async () => {
+    // Given
+    const { authenticateUserUseCase, createUserUseCase } =
+      createInstanceOfUseCase();
+    await createUserUseCase.execute(createUserDTO);
+    const expectedResult = new AppError(
+      AuthenticateUserEnum.EMAIL_OR_PASSWORD_INCORRECT_ERROR,
+    );
+
+    // When
     const execution = async () => {
-      await createUserUseCase.execute(createUserDTO);
       await authenticateUserUseCase.execute({
         ...authenticateUserDTO,
         password: 'incorrect-password',
       });
     };
 
-    expect(execution).rejects.toBeInstanceOf(AppError);
+    // Then
+    expect(execution).rejects.toEqual(expectedResult);
   });
 });
