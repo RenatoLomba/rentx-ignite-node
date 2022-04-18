@@ -12,6 +12,16 @@ export class RentalsRepository implements IRentalsRepository {
     this.repository = getRepository(RentalEntity);
   }
 
+  public async findById(id: string): Promise<Rental> {
+    const rental = await this.repository.findOne(id);
+
+    if (!rental) {
+      return null;
+    }
+
+    return plainToClass(Rental, rental);
+  }
+
   public async findOpenRentalByCar(car_id: string): Promise<Rental | null> {
     const rental = await this.repository.findOne({
       where: { car_id, end_date: null },
@@ -42,5 +52,14 @@ export class RentalsRepository implements IRentalsRepository {
     await this.repository.save(createdRental);
 
     return plainToClass(Rental, createdRental);
+  }
+
+  public async findByUserId(user_id: string): Promise<Rental[]> {
+    const rentals = await this.repository.find({
+      where: { user_id },
+      relations: ['car'],
+    });
+
+    return rentals.map((rentalEntity) => plainToClass(Rental, rentalEntity));
   }
 }

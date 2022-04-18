@@ -14,4 +14,5 @@ export interface ICarsRepository {
     carId: string,
     specifications: ISpecification[],
   ): Promise<ICar>;
+  updateAvailable(carId: string, available?: boolean): Promise<void>;
 }

@@ -4,6 +4,7 @@ import { inject, injectable } from 'tsyringe';
 import { CreateRentalDTO } from '@domain/dtos/rentals/CreateRentalDTO';
 import { Rental } from '@domain/entities/rentals/Rental';
 import { CreateRentalEnum } from '@domain/enums/rentals/CreateRentalEnum';
+import { ICarsRepository } from '@infra/repositories/interface/cars/ICarsRepository';
 import { IRentalsRepository } from '@infra/repositories/interface/rentals/IRentalsRepository';
 
 import { AppError } from '../../../shared/errors/AppError';
@@ -14,6 +15,9 @@ export class CreateRentalUseCase implements IUseCase {
   constructor(
     @inject('RentalsRepository')
     private readonly rentalsRepository: IRentalsRepository,
+
+    @inject('CarsRepository')
+    private readonly carsRepository: ICarsRepository,
   ) {}
 
   async execute(dto: CreateRentalDTO): Promise<Rental> {
@@ -42,6 +46,8 @@ export class CreateRentalUseCase implements IUseCase {
     }
 
     const createdRental = await this.rentalsRepository.create(rental);
+
+    await this.carsRepository.updateAvailable(createdRental.car_id, false);
 
     return createdRental;
   }

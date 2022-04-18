@@ -8,6 +8,14 @@ import { IRentalsRepository } from '../../../interface/rentals/IRentalsRepositor
 export class RentalsRepositoryInMemory implements IRentalsRepository {
   private rentals: RentalEntity[] = [];
 
+  async findById(id: string): Promise<Rental> {
+    const rental = this.rentals.find((rental) => rental.id === id);
+
+    if (!rental) return null;
+
+    return plainToClass(Rental, rental);
+  }
+
   async findOpenRentalByCar(car_id: string): Promise<Rental> {
     const rental = this.rentals.find(
       (rental) => rental.car_id === car_id && !rental.end_date,
@@ -40,5 +48,11 @@ export class RentalsRepositoryInMemory implements IRentalsRepository {
     this.rentals.push(createdRental);
 
     return plainToClass(Rental, createdRental);
+  }
+
+  public async findByUserId(user_id: string): Promise<Rental[]> {
+    const rentals = this.rentals.filter((rental) => rental.user_id === user_id);
+
+    return rentals.map((rentalEntity) => plainToClass(Rental, rentalEntity));
   }
 }

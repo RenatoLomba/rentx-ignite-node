@@ -32,6 +32,16 @@ export class CarsRepository extends Repository<Car> implements ICarsRepository {
     return updatedCar;
   }
 
+  async updateAvailable(carId: string, available?: boolean): Promise<void> {
+    const car = await this.repository.findOne(carId);
+
+    car.available = !!available;
+
+    const updatedCar = this.repository.create(car);
+
+    await this.repository.save(updatedCar);
+  }
+
   async findAvailable(filters: IListCarsFilters): Promise<ICar[]> {
     const where: FindConditions<Car> = { available: true };
 

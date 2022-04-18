@@ -4,6 +4,7 @@ import 'reflect-metadata';
 
 import { CreateRentalDTO } from '@domain/dtos/rentals/CreateRentalDTO';
 import { Rental } from '@domain/entities/rentals/Rental';
+import { CarsRepositoryInMemory } from '@infra/repositories/implementations/cars/in-memory/CarsRepositoryInMemory';
 import { RentalsRepositoryInMemory } from '@infra/repositories/implementations/rentals/in-memory/RentalsRepositoryInMemory';
 import { IRentalsRepository } from '@infra/repositories/interface/rentals/IRentalsRepository';
 
@@ -13,7 +14,8 @@ import { CreateRentalUseCase } from './CreateRentalUseCase';
 const createInstance = (
   rentalsRepository: IRentalsRepository,
 ): CreateRentalUseCase => {
-  return new CreateRentalUseCase(rentalsRepository);
+  const carsRepository = new CarsRepositoryInMemory();
+  return new CreateRentalUseCase(rentalsRepository, carsRepository);
 };
 
 describe('Create a Rental', () => {
