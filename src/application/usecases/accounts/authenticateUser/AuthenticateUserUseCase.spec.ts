@@ -5,6 +5,7 @@ import { ICreateUserDTO } from '@domain/dtos/accounts/ICreateUserDTO';
 import { AuthenticateUserEnum } from '@domain/enums/accounts/AuthenticateUserEnum';
 import { UsersRepositoryInMemory } from '@infra/repositories/implementations/accounts/in-memory/UsersRepositoryInMemory';
 
+import { UserTokensRepositoryInMemory } from '../../../../infra/repositories/implementations/accounts/in-memory/UserTokensRepositoryInMemory';
 import { CreateUserUseCase } from '../createUser/CreateUserUseCase';
 import { AuthenticateUserUseCase } from './AuthenticateUserUseCase';
 
@@ -25,7 +26,11 @@ const createInstanceOfUseCase = (): {
   createUserUseCase: CreateUserUseCase;
 } => {
   const usersRepository = new UsersRepositoryInMemory();
-  const authenticateUserUseCase = new AuthenticateUserUseCase(usersRepository);
+  const userTokensRepository = new UserTokensRepositoryInMemory();
+  const authenticateUserUseCase = new AuthenticateUserUseCase(
+    usersRepository,
+    userTokensRepository,
+  );
   const createUserUseCase = new CreateUserUseCase(usersRepository);
 
   return { authenticateUserUseCase, createUserUseCase };
