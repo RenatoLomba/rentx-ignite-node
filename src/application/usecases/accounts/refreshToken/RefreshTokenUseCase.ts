@@ -40,9 +40,7 @@ export class RefreshTokenUseCase implements IUseCase {
       throw new AppError(RefreshTokenEnum.INVALID_REFRESH_TOKEN_ERROR);
     }
 
-    const daysUntilTokenExpires = userToken.daysUntilTokenExpires();
-
-    if (daysUntilTokenExpires <= 0) {
+    if (userToken.tokenIsExpired()) {
       await this.userTokensRepository.deleteById(userToken.id);
 
       throw new AppError(RefreshTokenEnum.REFRESH_TOKEN_EXPIRED_ERROR);
