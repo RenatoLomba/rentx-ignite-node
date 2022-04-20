@@ -22,3 +22,11 @@ export const daysBetweenDates = (startDate: Date, endDate: Date) => {
 export const addDaysToDate = (days: number, date = new Date()) => {
   return dayjs(date).add(days, 'days').toDate();
 };
+
+export const addHoursToDate = (hours: number, date = new Date()) => {
+  return dayjs(date).add(hours, 'hours').toDate();
+};
+
+export const compareIfBefore = (startDate: Date, endDate: Date) => {
+  return dayjs(startDate).isBefore(endDate);
+};

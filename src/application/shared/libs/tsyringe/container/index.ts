@@ -1,5 +1,7 @@
 import { container } from 'tsyringe';
 
+import '../../../providers';
+
 import { UsersRepository } from '@infra/repositories/implementations/accounts/typeorm/UsersRepository';
 import { UserTokensRepository } from '@infra/repositories/implementations/accounts/typeorm/UserTokensRepository';
 import { CarImagesRepository } from '@infra/repositories/implementations/cars/typeorm/CarImagesRepository';

@@ -25,6 +25,8 @@ export class UserTokensRepository implements IUserTokensRepository {
       where: { user_id, refresh_token },
     });
 
+    if (!userToken) return null;
+
     return plainToClass(UserTokens, userToken);
   }
 
@@ -34,5 +36,15 @@ export class UserTokensRepository implements IUserTokensRepository {
     await this.repository.save(createdUserToken);
 
     return plainToClass(UserTokens, createdUserToken);
+  }
+
+  async findByRefreshToken(refresh_token: string): Promise<UserTokens> {
+    const userToken = await this.repository.findOne({
+      where: { refresh_token },
+    });
+
+    if (!userToken) return null;
+
+    return plainToClass(UserTokens, userToken);
   }
 }
