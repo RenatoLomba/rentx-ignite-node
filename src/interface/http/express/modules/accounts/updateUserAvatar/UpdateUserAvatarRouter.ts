@@ -8,7 +8,7 @@ import { UpdateUserAvatarController } from './UpdateUserAvatarController';
 
 const updateUserAvatarRouter = Router();
 
-const uploadAvatar = multer(upload('./tmp/avatar'));
+const uploadAvatar = multer(upload);
 
 updateUserAvatarRouter.patch(
   '/avatar',

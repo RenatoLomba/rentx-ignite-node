@@ -1,6 +1,8 @@
+import { plainToInstance } from 'class-transformer';
 import { Column, CreateDateColumn, Entity, PrimaryColumn } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
+import { UserResponseDTO } from '@domain/dtos/accounts/UserResponseDTO';
 import { IUser } from '@domain/entities/accounts/IUser';
 
 @Entity('users')
@@ -28,6 +30,12 @@ class User implements IUser {
 
   @CreateDateColumn()
   created_at: Date;
+
+  static toDomain(user: User): UserResponseDTO {
+    return plainToInstance(UserResponseDTO, user, {
+      excludeExtraneousValues: true,
+    });
+  }
 
   constructor() {
     if (!this.id) {

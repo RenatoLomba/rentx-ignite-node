@@ -1,10 +1,12 @@
 import 'reflect-metadata';
+import 'dotenv/config';
 import express, { NextFunction, Request, Response } from 'express';
 import 'express-async-errors';
 import swaggerUI from 'swagger-ui-express';
 
 import '@application/shared/libs/tsyringe/container';
 import { AppError } from '@application/shared/errors/AppError';
+import upload from '@application/shared/libs/multer/upload';
 import createConnection from '@infra/database/typeorm';
 
 import { router } from './routes';
@@ -16,6 +18,8 @@ const app = express();
 
 app.use(express.json());
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerConfig));
+app.use('/avatar', express.static(`${upload.tmpFolder}/avatar`));
+app.use('/cars-images', express.static(`${upload.tmpFolder}/cars`));
 app.use(router);
 app.use(
   (error: Error, request: Request, response: Response, next: NextFunction) => {

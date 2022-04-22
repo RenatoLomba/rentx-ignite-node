@@ -6,6 +6,8 @@ import { IUseCase } from '@application/usecases/IUseCase';
 import { ICreateCategoryDTO } from '@domain/dtos/cars/ICreateCategoryDTO';
 import { ICategoriesRepository } from '@infra/repositories/interface/cars/ICategoriesRepository';
 
+import { deleteFile } from '../../../shared/utils/file';
+
 @injectable()
 export class ImportCategoryUseCase implements IUseCase {
   constructor(
@@ -27,8 +29,8 @@ export class ImportCategoryUseCase implements IUseCase {
         .on('data', async ([name, description]: string[]) => {
           categories.push({ description, name });
         })
-        .on('end', () => {
-          fs.promises.unlink(file.path);
+        .on('end', async () => {
+          await deleteFile(file.path);
           resolve(categories);
         })
         .on('error', (err) => {

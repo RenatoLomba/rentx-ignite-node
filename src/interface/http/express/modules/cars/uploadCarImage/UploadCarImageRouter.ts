@@ -9,7 +9,7 @@ import { UploadCarImageController } from './UploadCarImageController';
 
 const uploadCarImageRouter = Router();
 
-const uploadCarImages = multer(upload('./tmp/cars'));
+const uploadCarImages = multer(upload);
 
 uploadCarImageRouter.post(
   '/:id/images',

@@ -7,7 +7,7 @@ import { ICarImagesRepository } from '@infra/repositories/interface/cars/ICarIma
 import { ICarsRepository } from '@infra/repositories/interface/cars/ICarsRepository';
 
 import { AppError } from '../../../shared/errors/AppError';
-import { deleteFile } from '../../../shared/utils/file';
+import { IStorageProvider } from '../../../shared/providers/StorageProvider/IStorageProvider';
 import { IUseCase } from '../../IUseCase';
 
 @injectable()
@@ -18,6 +18,9 @@ export class UploadCarImageUseCase implements IUseCase {
 
     @inject('CarsRepository')
     private readonly carsRepository: ICarsRepository,
+
+    @inject('StorageProvider')
+    private readonly storageProvider: IStorageProvider,
   ) {}
 
   async execute(dto: IUploadCarImagesDTO): Promise<ICarImage[]> {
@@ -32,17 +35,21 @@ export class UploadCarImageUseCase implements IUseCase {
 
       await Promise.all(
         car.images.map(async (ci) => {
-          await deleteFile(`./tmp/cars/${ci.image_name}`);
+          await this.storageProvider.delete(ci.image_name, 'cars');
         }),
       );
     }
 
     const carImages = await Promise.all(
       dto.images_names.map(async (imgName) => {
-        return this.carImagesRepository.create({
+        const imageCreated = await this.carImagesRepository.create({
           car_id: car.id,
           image_name: imgName,
         });
+
+        await this.storageProvider.save(imgName, 'cars');
+
+        return imageCreated;
       }),
     );
 

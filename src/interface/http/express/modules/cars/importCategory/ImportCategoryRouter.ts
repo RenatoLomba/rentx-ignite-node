@@ -9,7 +9,7 @@ import { ImportCategoryController } from './ImportCategoryController';
 
 const importCategoryRouter = Router();
 
-const uploadCsv = multer(upload('./tmp'));
+const uploadCsv = multer(upload);
 
 importCategoryRouter.post(
   '/import',
