@@ -145,4 +145,6 @@ dist
 # End of https://www.toptal.com/developers/gitignore/api/node
 
 # Custom
-tmp
+tmp/*
+!tmp/.gitkeep
+ormconfig.json
